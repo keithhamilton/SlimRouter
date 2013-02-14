@@ -148,3 +148,5 @@ router.addRoute('#Items/Details/:id', function(e,hash){
 ```
 
 In the above example, when either hash is routed, the other route, whose callback belongs to App.Helpers.XHRPool, will be aborted immediately.
+
+
