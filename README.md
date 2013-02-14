@@ -72,7 +72,7 @@ router.addRoute('#Items:query', 'item.filteredquery')
 The ```callbackTarget``` parameter is optional and should only be passed if ```callback``` is defined as an event to be raised upon a hash match. If omitted from ```addRoute```, or a route collection object used with ```addRoutes```, the document will be the target of the callback event.
 
 -example:
-router.addRoute('#Items:query', 'item.filteredquery', '#someElement');
+```router.addRoute('#Items:query', 'item.filteredquery', '#someElement');```
 
 
 ###addRoutes
@@ -113,9 +113,9 @@ For this situation, XHR requests, such as $.ajax, can be added to pools, and tho
 When you'd like to control XHR requests using SlimRouter, the ```addXHRPool``` function is used.
 
 - example
+
 ```
-//instantiate SlimRouter
-var router = new SlimRouter();
+var router = new SlimRouter(); //instantiate SlimRouter
 
 //add XHR Pool
 router.addXHRPool(App.Helpers.XHRPool);
@@ -144,9 +144,7 @@ router.addRoute('#Items/Details/:id', function(e,hash){
 	});
 
 	App.Helpers.XHRPool.push(req);
-});
-
-```
+});```
 
 In the above example, when either hash is routed, the other route, whose callback belongs to App.Helpers.XHRPool, will be aborted immediately.
 
