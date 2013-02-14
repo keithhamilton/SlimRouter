@@ -76,12 +76,11 @@ The ```callbackTarget``` parameter is optional and should only be passed if ```c
 
 
 ###addRoutes
-```router.addRoutes(routeCollection)```
+
 
 If you want to add multiple routes at a time, you can pass them in as an object literal using the ```addRoutes``` method.
 
 -example
-
 ```
 var routeCollection = {
 	'#Items:query' :
