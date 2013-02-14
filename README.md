@@ -8,7 +8,8 @@ SlimRouter uses key/value pairs of regular expressions and callback events to ro
 
 Optionally, routing can be called globally on-demand by instantiating SlimRouter as part of a global namespace.
 
-## `API`
+## API
+`
 - [instantiation] (#instantiation)	
 
 - Public Methods
@@ -73,6 +74,6 @@ The ```callbackTarget``` parameter is optional and should only be passed if ```c
 router.addRoute('#Items:query', 'item.filteredquery', '#someElement');
 
 
-
+`
 
 
