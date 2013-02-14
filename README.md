@@ -81,8 +81,8 @@ router.addRoute('#Items:query', 'item.filteredquery', '#someElement');
 If you want to add multiple routes at a time, you can pass them in as an object literal using the ```addRoutes``` method.
 
 -example
-```
-var routeCollection = {
+
+```var routeCollection = {
 	'#Items:query' :
 	{
 		callback: 'item.filteredquery',
@@ -101,8 +101,7 @@ var routeCollection = {
 		}
 	}
 }
-router.addRoutes(routeCollection);
-```
+router.addRoutes(routeCollection);```
 
 ## XHR Pooling
 As an optional feature, SlimRouter gives you the ability to abort XHR requests that may have been made prior to the current request. This feature may be advantageous if you have two requests that update the same page element, and may conflict or produce undesired results if both allowed to run to completion.
