@@ -12,6 +12,10 @@
              * event handler to trigger from the routes object
              * if no hash is present, sets internal hash value to defined
              * default hash or blank string if both hash and default hash are undefined
+
+             * if no callbackTarget is defined for the hash, and the callback is an event,
+             * the event will be raised to the document. Otherwise, the callbackTarget will be
+             * notified of the raised event.
              */
              
             _abortPreviousXHRRequests();
@@ -23,13 +27,21 @@
                 var re = new RegExp(key);
                 if (hash.match(re))
                 {
-                    if(typeof _routes[key] === 'function')
+                    if(typeof _routes[key].callback === 'function')
                     {
-                        _routes[key](hash);
+                        _routes[key].callback(hash);
                     }
                     else
                     {
-                        $(document).trigger(_routes[key], hash);
+                        if(_routes[key].callbackTarget)
+                        {
+                            $(_routes[key].callbackTarget).trigger(_routes[key].callback, hash);    
+                        }
+                        else
+                        {
+                            $(document).trigger(_routes[key].callback,hash);
+                        }
+                        
                     }
                     
                 }
@@ -60,7 +72,7 @@
             }
         };
 
-        function _addRoute(hash, callback)
+        function _addRoute(hash, callback, callbackTarget)
         {
             /* routes can be added in a few ways
              * a route hash can be given in a static form, such as #/Items/:id, where :id represents some number (matches #/Items/10, for example)
@@ -77,6 +89,11 @@
              * the callback parameter can either be a callback function, defined inline in the addRoute method, or an event to raise when a hash is matched.
              * if the callback is passed as a function, the hash will be passed into the callback function as the second parameter => function(event, hash)
              * if the callback is passed as an event that should be raised when the hash is matched, it will be triggered on the document object => $(document).trigger('event.that.was.raised'...)
+             *
+             * the callbackTarget parameter is optional, and should not be included if the callback parameter is a function. 
+             * If passed, the callbackTrigger parameter will specify the selector of the object that should be notified of 
+             * the callback event that is raised. 
+             * If a callbackTarget is not defined, the callback event will be raised to the document.
              */
 
             var param_substitions = 
@@ -95,8 +112,42 @@
             //ensure string ends with hash pattern by adding $ to end of string if not present
             if(hash.charAt(hash.length-1) !== '$') hash = hash + '$'
             
-            _routes[hash] = callback;
+            _routes[hash] = {
+                callback: callback, 
+                callbackTarget: callbackTarget
+            };
 
+        }
+
+        function _addRoutes(routeCollection)
+        {
+            /*
+             * multiple routes can be added in a single method call by calling addRoutes and passing a route collection object as the sole parameter.
+             * the route collection should use the route's hash as the key, and each hash can contain a callback and a callbackTarget property.
+             * For example: 
+
+                routeCollection = {
+                    hash : {
+                        callback: function(){}
+                    },
+                    anotherHash: {
+                        callback: 'some.trigger',
+                        callbackTarget: '#main'
+                    }
+                }
+                
+                router.addRoutes(routeCollection);
+
+            */
+
+            for(var key in routeCollection)
+            {
+                var hash = key;
+                var callback = routeCollection[key].callback ? routeCollection[key].callback : undefined;
+                var callbackTarget = routeCollection[key].callbackTarget ? routeCollection[key].callbackTarget : undefined
+
+                _addRoute(hash, callback, callbackTarget);
+            }
         }
         
         function _addXHRPool(xhrPool)
@@ -114,9 +165,10 @@
 
 
         return {
-            route: _route,
-            addRoute : _addRoute,
-            addXHRPool: _addXHRPool
+            route       : _route,
+            addRoute    : _addRoute,
+            addRoutes   : _addRoutes, 
+            addXHRPool  : _addXHRPool
         }
     }
 
