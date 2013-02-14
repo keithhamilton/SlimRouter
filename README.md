@@ -142,7 +142,8 @@ router.addRoute('#Items/Details/:id', function(e,hash){
 	});
 
 	App.Helpers.XHRPool.push(req);
-});```
+});
+```
 
 In the above example, when either hash is routed, the other route, whose callback belongs to App.Helpers.XHRPool, will be aborted immediately.
 
@@ -150,9 +151,9 @@ In the above example, when either hash is routed, the other route, whose callbac
 Routing can be performed on demand, by calling SlimRouter's ```route``` method, or can be called by binding the document to the hashchange event in jQuery.
 
 ###route
-``` route(hash);```
 
 - binding to the hashchange event
+
 ```
 App.Helpers.router = new SlimRouter();
 /*
@@ -166,8 +167,10 @@ $(document).bind('hashchange', function(e)
 ```
 
 - calling route manually
+
 ```
 App.Helpers.router = new SlimRouter();
 App.Helpers.router.route(window.location.hash);
 ```
+
 
