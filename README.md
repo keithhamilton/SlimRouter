@@ -9,12 +9,13 @@ SlimRouter uses key/value pairs of regular expressions and callback events to ro
 Optionally, routing can be called globally on-demand by instantiating SlimRouter as part of a global namespace.
 
 # `API`
-- [instantiation] (#instantiation)	
+- [instantiation] (#instantiation)
 
 - Public Methods
-	* [addRoute] (#Adding Routes)
-	* [addXHRPool] (#Adding XHR Pools)
-	* [route] (#Routing)
+	* [addRoute] (#addRoute)
+	* [addRoutes] (#addRoutes)
+	* [addXHRPool] (#addXHRPool)
+	* [route] (#route)
 
 ## Instantiation
 ### var router = new SlimRouter();
@@ -145,4 +146,28 @@ router.addRoute('#Items/Details/:id', function(e,hash){
 
 In the above example, when either hash is routed, the other route, whose callback belongs to App.Helpers.XHRPool, will be aborted immediately.
 
+## Routing
+Routing can be performed on demand, by calling SlimRouter's ```route``` method, or can be called by binding the document to the hashchange event in jQuery.
+
+###route
+``` route(hash);```
+
+- binding to the hashchange event
+```
+App.Helpers.router = new SlimRouter();
+/*
+ * add routes
+ */
+
+$(document).bind('hashchange', function(e)
+{
+	App.Helpers.router.route(window.location.hash);
+});
+```
+
+- calling route manually
+```
+App.Helpers.router = new SlimRouter();
+App.Helpers.router.route(window.location.hash);
+```
 
