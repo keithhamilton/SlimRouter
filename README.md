@@ -21,6 +21,8 @@ Optionally, routing can be called globally on-demand by instantiating SlimRouter
 Just like that, SlimRouter is instantiated.
 
 ## Adding Routes
+
+###addRoute
 ```router.addRoute(hash, callback, callbackTarget);```
 
 Adding routes can be done in a few ways, using the addRoute method.
@@ -73,6 +75,76 @@ The ```callbackTarget``` parameter is optional and should only be passed if ```c
 router.addRoute('#Items:query', 'item.filteredquery', '#someElement');
 
 
+###addRoutes
+```router.addRoutes(routeCollection)```
 
+If you want to add multiple routes at a time, you can pass them in as an object literal using the ```addRoutes``` method.
 
+-example
+```
+var routeCollection = {
+	'#Items:query' :
+	{
+		callback: 'item.filteredquery',
+		callbackTarget: '#main'
+	},
+	'#Items/Details/:id' : 
+	{
+		callback: function(e,hash){
+		//do something
+		}
+	},
+	'#Items/' : 
+	{
+		callback: function(e,hash){
+		//do something
+		}
+	}
+}
+router.addRoutes(routeCollection);
+```
 
+## XHR Pooling
+As an optional feature, SlimRouter gives you the ability to abort XHR requests that may have been made prior to the current request. This feature may be advantageous if you have two requests that update the same page element, and may conflict or produce undesired results if both allowed to run to completion.
+
+For this situation, XHR requests, such as $.ajax, can be added to pools, and those pools can be added to SlimRouter's pool collection. When a request is made, any existing requests that are active and in SlimRouter's pool collection will be aborted in favor of the current request.
+
+When you'd like to control XHR requests using SlimRouter, the ```addXHRPool``` function is used.
+
+- example
+```
+//instantiate SlimRouter
+var router = new SlimRouter();
+
+//add XHR Pool
+router.addXHRPool(App.Helpers.XHRPool);
+
+//add routes
+router.addRoute('#Items:query', function(e,hash){
+	var req = $.ajax({
+		url: '/Items/FilteredQuery',
+		type: 'GET',
+		success: function(data){
+			//do something with data
+		}
+	});
+
+	App.Helpers.XHRPool.push(req);
+});
+router.addRoute('#Items/Details/:id', function(e,hash){
+	var req = $.ajax({
+		url: '/Items/Details',
+		type: 'GET',
+		dataType: 'html',
+		data: {id: hash.split('/')[2]}
+		success: function(data){
+			//do something with data
+		}
+	});
+
+	App.Helpers.XHRPool.push(req);
+});
+
+```
+
+In the above example, when either hash is routed, the other route, whose callback belongs to App.Helpers.XHRPool, will be aborted immediately.
