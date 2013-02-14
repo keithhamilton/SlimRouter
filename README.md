@@ -3,6 +3,11 @@ SlimRouter
 
 Simple router module that can be used with or without require.js
 
+# How it works
+SlimRouter uses key/value pairs of regular expressions and callback events to route changes to ```window.location.hash``` to the appropriate action. For automated use, bind ```SlimRouter.route(window.location.hash)``` to the ```hashchange``` event using jQuery.
+
+Optionally, routing can be called globally on-demand by instantiating SlimRouter as part of a global namespace.
+
 ## `API`
 - [instantiation] (#instantiation)	
 
@@ -16,13 +21,14 @@ Simple router module that can be used with or without require.js
 Just like that, SlimRouter is instantiated.
 
 ## Adding Routes
-```router.addRoute(hash, callback);```
+```router.addRoute(hash, callback, callbackTarget);```
 
 Adding routes can be done in a few ways, using the addRoute method.
 
-addRoute takes two parameters: 
-- hash: the hash that will trigger the route method
-- callback: either an event to be raised when a hash is routed, or a callback function to be executed when a hash is routed
+addRoute takes two required parameters and one optional parameter: 
+- hash (required): the hash that will trigger the route method
+- callback (required): either an event to be raised when a hash is routed, or a callback function to be executed when a hash is routed
+- callbackTarget (optional): if callback is a function, this parameter should be omitted. If specified, callbackTarget the selector of the document element on which to trigger the callback event. If omitted, ```document``` will be the recipient of the raised callback event.
 
 ###hash
 The ```hash``` parameter can be entered as a static string, a regular expression, or can use path substitution keywords. 
@@ -59,6 +65,13 @@ router.addRoute('#Items:query',function(e, hash){
 router.addRoute('#Items:query', 'item.filteredquery')
 // when hash is matched, $(document).trigger('item.filteredquery') is called.
 ```
+
+###callbackTarget - selector of target for callback event
+The ```callbackTarget``` parameter is optional and should only be passed if ```callback``` is defined as an event to be raised upon a hash match. If omitted from ```addRoute```, or a route collection object used with ```addRoutes```, the document will be the target of the callback event.
+
+-example:
+router.addRoute('#Items:query', 'item.filteredquery', '#someElement');
+
 
 
 
