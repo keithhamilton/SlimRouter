@@ -4,9 +4,7 @@ SlimRouter
 Simple router module that can be used with or without require.js
 
 # How it works
-SlimRouter uses key/value pairs of regular expressions and callback events to route changes to ```window.location.hash``` to the appropriate action. For automated use, bind ```SlimRouter.route(window.location.hash)``` to the ```hashchange``` event using jQuery.
-
-Optionally, routing can be called globally on-demand by instantiating SlimRouter as part of a global namespace.
+SlimRouter uses key/value pairs of regular expressions and callback functions to route changes to ```window.location.hash``` to the appropriate action. For automated use, bind ```SlimRouter.route(window.location.hash)``` to the ```hashchange``` event using jQuery.
 
 # `API`
 - [Constructor] (#constructor)
