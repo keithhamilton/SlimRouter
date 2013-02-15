@@ -17,21 +17,38 @@ Optionally, routing can be called globally on-demand by instantiating SlimRouter
 	* [addXHRPool] (#addXHRPool)
 	* [route] (#route)
 
-## Instantiation
-### var router = new SlimRouter();
+## Contstructor
+
+```var router = new SlimRouter();```
 Just like that, SlimRouter is instantiated.
 
-## Adding Routes
+Optionally, if you would like to pass a predefined route collection into SlimRouter's constructor, you can.
+```
+var routeCollection = {
+	'#Items:query' : ItemController.queryItems,
+	
+	'#Items/Details/:id' : function(hash){
+		//do something
+		},
+	
+	'#Items/' : ItemController.itemIndex
+}
+
+var router = new SlimRouter(routeCollection);
+```
+SlimRouter is constructed, and the route collection is passed internally to SlimRouter's addRoutes method.
+
+
+## Adding Routes After Construction
 
 ###addRoute
-```router.addRoute(hash, callback, callbackTarget);```
+```router.addRoute(hash, callbackFunction);```
 
 Adding routes can be done in a few ways, using the addRoute method.
 
-addRoute takes two required parameters and one optional parameter: 
+addRoute takes two required parameters: 
 - hash (required): the hash that will trigger the route method
-- callback (required): either an event to be raised when a hash is routed, or a callback function to be executed when a hash is routed
-- callbackTarget (optional): if callback is a function, this parameter should be omitted. If specified, callbackTarget the selector of the document element on which to trigger the callback event. If omitted, ```document``` will be the recipient of the raised callback event.
+- callbackFunction (required): a callback function to be executed when a hash is routed
 
 ###hash
 The ```hash``` parameter can be entered as a static string, a regular expression, or can use path substitution keywords. 
@@ -53,27 +70,15 @@ The hash ```#Items?filter=Photograhpy&Studio``` can be passed into the addRoute 
 - ```:string:query```
 
 ###callback
-The ```callback``` parameter can be passed in either as a callback function or an event that should be raised when a hash is matched.
+The ```callback``` parameter should be defined as a callback function to be executed when a hash is matched.
 
--example - callback as callback function
+-example 
 ``` 
 router.addRoute('#Items:query',function(e, hash){
 	...do stuff here
 });
 // when hash is matched, callback function is executed
 ```
-
--example - callback as event
-```
-router.addRoute('#Items:query', 'item.filteredquery')
-// when hash is matched, $(document).trigger('item.filteredquery') is called.
-```
-
-###callbackTarget - selector of target for callback event
-The ```callbackTarget``` parameter is optional and should only be passed if ```callback``` is defined as an event to be raised upon a hash match. If omitted from ```addRoute```, or a route collection object used with ```addRoutes```, the document will be the target of the callback event.
-
--example:
-```router.addRoute('#Items:query', 'item.filteredquery', '#someElement');```
 
 
 ###addRoutes
@@ -82,24 +87,15 @@ If you want to add multiple routes at a time, you can pass them in as an object 
 -example
 ```
 var routeCollection = {
-	'#Items:query' :
-	{
-		callback: 'item.filteredquery',
-		callbackTarget: '#main'
-	},
-	'#Items/Details/:id' : 
-	{
-		callback: function(e,hash){
+	'#Items:query' : ItemController.queryItems,
+	
+	'#Items/Details/:id' : function(hash){
 		//do something
-		}
-	},
-	'#Items/' : 
-	{
-		callback: function(e,hash){
-		//do something
-		}
-	}
+		},
+	
+	'#Items/' : ItemController.itemIndex
 }
+
 router.addRoutes(routeCollection);
 ```
 
@@ -155,22 +151,22 @@ Routing can be performed on demand, by calling SlimRouter's ```route``` method, 
 - binding to the hashchange event
 
 ```
-App.Helpers.router = new SlimRouter();
+var slimRouter = new SlimRouter();
 /*
  * add routes
  */
 
 $(document).bind('hashchange', function(e)
 {
-	App.Helpers.router.route(window.location.hash);
+	slimRouter.route(window.location.hash);
 });
 ```
 
 - calling route manually
 
 ```
-App.Helpers.router = new SlimRouter();
-App.Helpers.router.route(window.location.hash);
+var slimRouter = new SlimRouter();
+slimRouter.route(window.location.hash);
 ```
 
 

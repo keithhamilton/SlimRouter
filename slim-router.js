@@ -15,10 +15,16 @@
         window[name] = definition();
     }
     
-}('SlimRouter', function() {
+}('SlimRouter', function(routeCollection) {
+
+    /* a route collection can be pre-defined and passed in to the SlimRouter contstructor,
+     * or SlimRouter can be instantiated without parameters, and routes can be added later.
+     */
 
     var _routes = {},
-            _XHRPools = [];
+        _XHRPools = [];
+    
+    if(routeCollection) _addRoutes(routeCollection);
 
     function _route(hash)
     {
@@ -27,9 +33,7 @@
          * if no hash is present, sets internal hash value to defined
          * default hash or blank string if both hash and default hash are undefined
 
-         * if no callbackTarget is defined for the hash, and the callback is an event,
-         * the event will be raised to the document. Otherwise, the callbackTarget will be
-         * notified of the raised event.
+         * on regular expression match, the route's callback function is triggered, with hash as the argument.
          */
 
         _abortPreviousXHRRequests();
@@ -41,22 +45,7 @@
             var re = new RegExp(key);
             if (hash.match(re))
             {
-                if (typeof _routes[key].callback === 'function')
-                {
-                    _routes[key].callback(hash);
-                }
-                else
-                {
-                    if (_routes[key].callbackTarget)
-                    {
-                        $(_routes[key].callbackTarget).trigger(_routes[key].callback, hash);
-                    }
-                    else
-                    {
-                        $(document).trigger(_routes[key].callback, hash);
-                    }
-
-                }
+                _routes[key](hash);
 
             }
         }
@@ -86,7 +75,7 @@
         }
     };
 
-    function _addRoute(hash, callback, callbackTarget)
+    function _addRoute(hash, callbackFunction)
     {
         /* routes can be added in a few ways
          * a route hash can be given in a static form, such as #/Items/:id, where :id represents some number (matches #/Items/10, for example)
@@ -100,14 +89,7 @@
          *            #Items?filter=Parameter%20One&Parameter_Two
          *            #Items?Parameter%20One&Parameter_Two
          *
-         * the callback parameter can either be a callback function, defined inline in the addRoute method, or an event to raise when a hash is matched.
-         * if the callback is passed as a function, the hash will be passed into the callback function as the second parameter => function(event, hash)
-         * if the callback is passed as an event that should be raised when the hash is matched, it will be triggered on the document object => $(document).trigger('event.that.was.raised'...)
-         *
-         * the callbackTarget parameter is optional, and should not be included if the callback parameter is a function. 
-         * If passed, the callbackTrigger parameter will specify the selector of the object that should be notified of 
-         * the callback event that is raised. 
-         * If a callbackTarget is not defined, the callback event will be raised to the document.
+         * the callback parameter is the callback function that should be executed when the hash is matched in the router.
          */
 
         var param_substitions =
@@ -126,10 +108,7 @@
         //ensure string ends with hash pattern by adding $ to end of string if not present
         if (hash.charAt(hash.length - 1) !== '$') hash = hash + '$'
 
-        _routes[hash] = {
-            callback: callback,
-            callbackTarget: callbackTarget
-        };
+        _routes[hash] = callbackFunction;
 
     }
 
@@ -137,17 +116,11 @@
     {
         /*
          * multiple routes can be added in a single method call by calling addRoutes and passing a route collection object as the sole parameter.
-         * the route collection should use the route's hash as the key, and each hash can contain a callback and a callbackTarget property.
-         * For example: 
+         * the route collection should use the route's hash as the key, and its callback function for the value.
 
             routeCollection = {
-                hash : {
-                    callback: function(){}
-                },
-                anotherHash: {
-                    callback: 'some.trigger',
-                    callbackTarget: '#main'
-                }
+                hash            : callbackFunction,
+                other/hash      : otherCallbackFunction
             }
             
             router.addRoutes(routeCollection);
@@ -157,10 +130,9 @@
         for (var key in routeCollection)
         {
             var hash = key;
-            var callback = routeCollection[key].callback ? routeCollection[key].callback : undefined;
-            var callbackTarget = routeCollection[key].callbackTarget ? routeCollection[key].callbackTarget : undefined
+            var callbackFunction = routeCollection[key];
 
-            _addRoute(hash, callback, callbackTarget);
+            _addRoute(hash, callbackFunction);
         }
     }
 
