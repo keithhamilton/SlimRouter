@@ -9,7 +9,7 @@ SlimRouter uses key/value pairs of regular expressions and callback events to ro
 Optionally, routing can be called globally on-demand by instantiating SlimRouter as part of a global namespace.
 
 # `API`
-- [Constructor] (#Constructor)
+- [Constructor] (#constructor)
 
 - Public Methods
 	* [addRoute] (#addRoute)
