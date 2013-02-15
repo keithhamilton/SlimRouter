@@ -14,7 +14,7 @@ Optionally, routing can be called globally on-demand by instantiating SlimRouter
 - Public Methods
 	* [addRoute] (#addRoute)
 	* [addRoutes] (#addRoutes)
-	* [addXHRPool] (#addXHRPool)
+	* [addXHRPool] (#xhr-pooling)
 	* [route] (#route)
 
 ## Constructor
